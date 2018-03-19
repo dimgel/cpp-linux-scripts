@@ -67,10 +67,7 @@ int main(int argc, char** argv) {
 		puts("Recompiling...");
 
 		// Commented out: permission denied if executed by restricted user. Create manually with mode=777.
-//		auto targetDir = target.parent_path();
-//		if (!exists(targetDir)) {
-//			create_directory(targetDir);
-//		}
+//		create_directories(target.parent_path());
 		
 		// https://stackoverflow.com/a/1003654/4247442
 		string cmd = "tail -n +2 \"" + source.string() + "\" | g++ -o \"" + target.string() + "\" -xc++ -lstdc++fs -";
