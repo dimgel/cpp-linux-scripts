@@ -32,11 +32,11 @@ Same approach is used for Python scripts, Scala scripts, etc. So I did the same:
 
 2. [Optional] Check its source code: update GCC options used to compile your scripts; remove "Recompiling..." message if it messes with our scripts' output.
 
-3. Compile and install it. I install to /usr/local/bin, so I run this command as root. You can install it anywhere you want, just don't forget to edit path in `hello.cpp`'s shebang line. I use gcc 7.3.0, so I explicitly link libstdc++fs.a which implements std::experimental::filesystem.
+3. Compile and install it. I install to `/usr/local/bin`, so I run this command as root. You can install it anywhere you want, just don't forget to edit path in `hello.cpp`'s shebang line. I use gcc 7.3.0, so I explicitly link `libstdc++fs.a` which implements `std::experimental::filesystem`.
 
         # g++ build-n-run.cpp -lstdc++fs -o /usr/local/bin/build-n-run
 
-4. Create directory for compiled scripts. Its full path must be the same as installed program's plus ".compiled" suffix. If that directory is shared among multiple users, grant global access to it.
+4. Create directory for compiled scripts. Its full path must be the same as installed program's plus `.compiled` suffix. If that directory is shared among multiple users, grant global access to it.
 
         # mkdir /usr/local/bin/build-n-run.compiled
         # chmod a+rwx /usr/local/bin/build-n-run.compiled
