@@ -1,6 +1,5 @@
 // How to build with gcc-7.3.0: 
 // # g++ build-n-run.cpp -lstdc++fs -o /usr/local/bin/build-n-run
-// # mkdir /usr/local/bin/build-n-run.compiled; chmod a+rwx /usr/local/bin/build-n-run.compiled
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,7 +24,7 @@ string replaceAll(string s, const string& search, const string& replace) {
 }
 
 
-// I call gcc via `man 3 system` which starts shell. Slow. OK for compilation, but not for compiled script.
+// I call gcc via `system(3)` which starts shell. Slow. OK for compilation, but not for running compiled script.
 int fastExec(const char* cmd, char** argv) {
 	auto pid = fork();
 	if (pid == -1) {
@@ -49,33 +48,37 @@ int fastExec(const char* cmd, char** argv) {
 
 
 int main(int argc, char** argv) {
-	path me(argv[0]);
+	path me(*argv++);
 	if (argc < 2) {
 		fprintf(stderr, "ERROR: Usage: %s SCRIPT.cpp [ARG...]\n", me.filename().c_str());
 		exit(1);
 	}
 	
-	path source(argv[1]);
+	path source(*argv);
 	if (source.extension() != ".cpp") {
 		fputs("ERROR: Given script must have .cpp extension", stderr);
 		exit(1);
 	}
 	
-	path target(me.string() + ".compiled/" + replaceAll(canonical(source), "/", "--").substr(2));
+	char* home = getenv("HOME");
+	if (home == nullptr || *home == '\0') {
+		fputs("ERROR: HOME environment variable is not set", stderr);
+		exit(1);
+	}
+	path target(string(home) + "/bin/" + me.filename().string() + ".compiled/" + replaceAll(canonical(source), "/", "--").substr(2));
 	target.replace_extension();
 	
 	if (!exists(target) || last_write_time(source) > last_write_time(target)) {
 		puts("Recompiling...");
-
-		// Commented out: permission denied if executed by restricted user. Create manually with mode=777.
-//		create_directories(target.parent_path());
+		
+		create_directories(target.parent_path());
 		
 		// https://stackoverflow.com/a/1003654/4247442
-		string cmd = "tail -n +2 \"" + source.string() + "\" | g++ -o \"" + target.string() + "\" -xc++ -lstdc++fs -";
+		string cmd = "tail -n +2 \"" + source.string() + "\" | g++ -o \"" + target.string() + "\" -xc++ -Wall -lstdc++fs -";
 		if (system(cmd.c_str()) != 0) {
 			exit(1);
 		}
 	}
 	
-	return fastExec(target.c_str(), argv + 1);
+	return fastExec(target.c_str(), argv);
 }
