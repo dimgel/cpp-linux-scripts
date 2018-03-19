@@ -43,6 +43,7 @@ int fastExec(const char* cmd, char** argv) {
 			fputs("ERROR: waitpid() failed", stderr);
 			exit(1);
 		}
+		return status;
 	}
 }
 
