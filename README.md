@@ -1,6 +1,6 @@
 # Writing linux scripts in C++
 
-## Concent
+## Concept
 
 They say compiled languages are inconvenient for scripting because you have to recompile your script everytime you edit it. A little program `build-n-run.cpp` presented in this repo solves the problem.
 
