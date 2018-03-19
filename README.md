@@ -32,7 +32,7 @@ Same approach is used for Python scripts, Scala scripts, etc. So I did the same:
 
 2. [Optional] Check its source code, update GCC options to your needs.
 
-3. Compile and install it. I install to /usr/local/bin, so I run this command as root. You can install it anywhere you want. I use gcc 7.3.0, so I explicitly link libstdc++fs.a which implements std::experimental::filesystem.
+3. Compile and install it. I install to /usr/local/bin, so I run this command as root. You can install it anywhere you want, just don't forget to edit path in `hello.cpp`'s shebang line. I use gcc 7.3.0, so I explicitly link libstdc++fs.a which implements std::experimental::filesystem.
 
         # g++ build-n-run.cpp -lstdc++fs -o /usr/local/bin/build-n-run
 
