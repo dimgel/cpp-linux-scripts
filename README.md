@@ -4,9 +4,11 @@
 
 ### In short (for experienced linux users)
 
-- Create C++ source file, prepend it with shebang line `#!/path/to/build-n-run`, make it executable `chmod +x script.cpp` and run: `./script.cpp`.
+1. Compile and install `build-n-run.cpp`.
 
-- `build-n-run` compiles `script.cpp` to `~/bin/build-n-run.compiled/` **only if source file is newer than compiled binary**, and then runs compiled binary.
+2. Create C++ source file, prepend it with shebang line `#!/path/to/build-n-run`, make it executable `chmod +x script.cpp` and run: `./script.cpp`.
+
+3. `build-n-run` compiles `script.cpp` to `~/bin/build-n-run.compiled/` **only if source file is newer than compiled binary**, and then runs compiled binary.
 
 ### In detail
 
@@ -61,3 +63,9 @@ I downloaded `hello.cpp` to `/home/me/tmp`, and compiled binary's name reflects 
 ## Security concerns
 
 Compiled cache is inside user's home, so scripts compiled by one user cannot be run by other users (see issue #1).
+
+## Discussions
+
+- [linux.org.ru](https://www.linux.org.ru/forum/development/14090221) (Russian)
+
+- [reddit.com](https://www.reddit.com/r/linux/comments/85gaqy/writing_linux_scripts_in_c/)
