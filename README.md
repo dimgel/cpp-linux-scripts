@@ -9,7 +9,7 @@ In bash scripts, first line always starts with "[shebang](https://en.wikipedia.o
         #!/bin/bash
         echo "Hello world!"
 
-Same approach is used for Python scripts, Scala scripts, etc. So I did the same: file `main.cpp` in this repo is normal C++ program prepended with shebang line:
+Same approach is used for Python scripts, Scala scripts, etc. So I did the same: file `hello.cpp` in this repo is normal C++ program prepended with shebang line:
 
         #!/usr/local/bin/build-n-run
         #include <stdio.h>
