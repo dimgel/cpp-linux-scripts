@@ -30,7 +30,7 @@ Same approach is used for Python scripts, Scala scripts, etc. So I did the same:
 
 1. Download build-n-run.cpp from this repo.
 
-2. [Optional] Check its source code, update GCC options to your needs.
+2. [Optional] Check its source code, update GCC options to your needs. You may also want to remove "Recompiling..." message since it can mess with our scripts' output.
 
 3. Compile and install it. I install to /usr/local/bin, so I run this command as root. You can install it anywhere you want, just don't forget to edit path in `hello.cpp`'s shebang line. I use gcc 7.3.0, so I explicitly link libstdc++fs.a which implements std::experimental::filesystem.
 
