@@ -8,7 +8,7 @@
 
 2. Create C++ source file, prepend it with shebang line `#!/path/to/build-n-run`, make it executable `chmod +x script.cpp` and run: `./script.cpp`.
 
-3. `build-n-run` compiles `script.cpp` to `~/bin/build-n-run.compiled/` **only if source file is newer than compiled binary**, and then runs compiled binary.
+3. `build-n-run` compiles `script.cpp` to `~/.cache/build-n-run/` **only if source file is newer than compiled binary**, and then runs compiled binary.
 
 ### In detail
 
@@ -53,9 +53,9 @@ That's all. Now write C++ program with shebang line, **chmod it to be executable
         Recompiling...
         Hello world!
 
-Let's take a look at `~/bin/build-n-run.compiled` directory:
+Let's take a look at `~/.cache/build-n-run` directory:
 
-        $ ls ~/bin/build-n-run.compiled
+        $ ls ~/.cache/build-n-run
         home--me--tmp--hello
 
 I downloaded `hello.cpp` to `/home/me/tmp`, and compiled binary's name reflects source's full path, slashes replaced with `"--"`.

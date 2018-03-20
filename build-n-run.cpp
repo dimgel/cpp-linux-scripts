@@ -1,5 +1,5 @@
 // How to build with gcc-7.3.0: 
-// # g++ build-n-run.cpp -lstdc++fs -o /usr/local/bin/build-n-run
+// # c++ build-n-run.cpp -lstdc++fs -o /usr/local/bin/build-n-run
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
 		fputs("ERROR: HOME environment variable is not set", stderr);
 		exit(1);
 	}
-	path target(string(home) + "/bin/" + me.filename().string() + ".compiled/" + replaceAll(canonical(source), "/", "--").substr(2));
+	path target(string(home) + "/.cache/" + me.filename().string() + "/" + replaceAll(canonical(source), "/", "--").substr(2));
 	target.replace_extension();
 	
 	if (!exists(target) || last_write_time(source) > last_write_time(target)) {
