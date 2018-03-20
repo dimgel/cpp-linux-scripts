@@ -1,5 +1,7 @@
 # Writing linux scripts in C++
 
+Disclaimer: please stop telling me this is bad idea or bad implementation. I don't care; was just trying C++ filesystem API; haven't yet created (and so far have no plans to create) any useful C++ scripts; uploaded it to github because was asked to; and was very surprised to get huge feedback, enhacement requests and pull requests for such trivial next-to-hello-world program.
+
 ## In short
 
 1. Compile and install `build-n-run.cpp`: `make && sudo make install`.
@@ -62,7 +64,7 @@ I downloaded `hello.cpp` to `/home/me/tmp`, and compiled binary's name reflects 
 
 Compiled cache is inside user's home, so scripts compiled by one user cannot be run by other users (see issue #1).
 
-## Discussions
+## Known discussions
 
 - [linux.org.ru](https://www.linux.org.ru/forum/development/14090221) (Russian)
 
