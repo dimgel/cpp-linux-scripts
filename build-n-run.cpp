@@ -74,7 +74,7 @@ int main(int argc, char** argv) {
 		create_directories(target.parent_path());
 		
 		// https://stackoverflow.com/a/1003654/4247442
-		string cmd = "tail -n +2 \"" + source.string() + "\" | g++ -o \"" + target.string() + "\" -xc++ -Wall -lstdc++fs -";
+		string cmd = "tail -n +2 \"" + source.string() + "\" | c++ -o \"" + target.string() + "\" -xc++ -Wall -lstdc++fs -";
 		if (system(cmd.c_str()) != 0) {
 			exit(1);
 		}
