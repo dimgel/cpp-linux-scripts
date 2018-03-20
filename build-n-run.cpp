@@ -1,6 +1,3 @@
-// How to build with gcc-7.3.0: 
-// # c++ build-n-run.cpp -lstdc++fs -o /usr/local/bin/build-n-run
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>

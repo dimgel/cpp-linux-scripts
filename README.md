@@ -1,16 +1,14 @@
 # Writing linux scripts in C++
 
-## Concept
+## In short
 
-### In short (for experienced linux users)
+1. Compile and install `build-n-run.cpp`: `make && sudo make install`.
 
-1. Compile and install `build-n-run.cpp`.
-
-2. Create C++ source file, prepend it with shebang line `#!/path/to/build-n-run`, make it executable `chmod +x script.cpp` and run: `./script.cpp`.
+2. Create C++ source file, prepend it with shebang line `#!/usr/local/bin/build-n-run`, make it executable `chmod +x script.cpp` and run: `./script.cpp`. An example `hello.cpp` script is provided.
 
 3. `build-n-run` compiles `script.cpp` to `~/.cache/build-n-run/` **only if source file is newer than compiled binary**, and then runs compiled binary.
 
-### In detail
+## Concept
 
 They say compiled languages are inconvenient for scripting because you have to recompile your script everytime you edit it. A little program `build-n-run.cpp` presented in this repo solves the problem.
 
@@ -42,9 +40,9 @@ Same approach is used for Python scripts, Scala scripts, etc. So I did the same:
 
 2. (Optional) Check its source code: you might want to update GCC options used to compile your scripts, or remove "Recompiling..." message if it messes with our scripts' output.
 
-3. Compile and install it. I install to `/usr/local/bin`, so I run this command as root; you can install it anywhere you want, just don't forget to update path in scripts' shebang line. I use gcc 7.3.0, so I explicitly link `libstdc++fs.a` which implements `std::experimental::filesystem`.
+3. Build and install it. `make install` copies binary to `/usr/local/bin`; you can copy it anywhere you want, just don't forget to update path in scripts' shebang line. I use gcc 7.3.0, so I explicitly link `libstdc++fs.a` which implements `std::experimental::filesystem`.
 
-        # g++ build-n-run.cpp -lstdc++fs -o /usr/local/bin/build-n-run
+        # make && sudo make install
 
 That's all. Now write C++ program with shebang line, **chmod it to be executable**, and run:
 
