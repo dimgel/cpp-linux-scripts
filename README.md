@@ -1,6 +1,8 @@
 # Writing linux scripts in C++
 
-Disclaimer: please stop telling me this is bad idea or bad implementation. I don't care; was just trying C++ filesystem API; haven't yet created (and so far have no plans to create) any useful C++ scripts; uploaded it to github because was asked to; and was very surprised to get huge feedback, enhacement requests and pull requests for such trivial next-to-hello-world program.
+Disclaimer: please stop telling me this is bad idea or bad implementation. I don't care; was just trying C++ filesystem API; had fun setting executable bit on a `.cpp` file; haven't yet created (and so far have no plans to create) any useful C++ scripts; uploaded it to github because was asked to; and was very surprised to get huge feedback, enhacement requests and even pull requests O_O for such trivial next-to-hello-world program.
+
+BTW, anyone needs remote Software Developer? Middle C++, Senior Java / Scala / PHP / fullstack web. Resume: [http://dimgel.me/en/Dmitry_Grigoriev_resume_en-short.pdf](http://dimgel.me/en/Dmitry_Grigoriev_resume_en-short.pdf)
 
 ## In short
 
