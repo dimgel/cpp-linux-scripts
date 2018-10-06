@@ -1,13 +1,15 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <wait.h>
+#include <cstdio>
+#include <cstdlib>
 #include <string>
 #include <vector>
 #include <experimental/filesystem>
+#include <unistd.h>
+#include <wait.h>
 
-using namespace std;
-using namespace std::experimental::filesystem;
+namespace fs = std::experimental::filesystem;
+
+using std::string;
+using fs::path;
 
 
 // No such thing in stdlib, and I don't want to link boost.
@@ -65,14 +67,20 @@ int main(int argc, char** argv) {
 	path target(string(home) + "/.cache/" + me.filename().string() + "/" + replaceAll(canonical(source), "/", "--").substr(2));
 	target.replace_extension();
 	
-	if (!exists(target) || last_write_time(source) > last_write_time(target)) {
+	if (!fs::exists(target) || fs::last_write_time(source) > fs::last_write_time(target)) {
 		puts("Recompiling...");
 		
 		create_directories(target.parent_path());
 		
+		// GCC fails to link std::experimental::filesystem when comiles from stdin. So cut off shebank line from source and store it in some temporary file.
+		// I don't use tmpfile() because I need file name.
+		path tmp(target.string() + ".tmp.cpp");
+		
 		// https://stackoverflow.com/a/1003654/4247442
-		string cmd = "tail -n +2 \"" + source.string() + "\" | c++ -o \"" + target.string() + "\" -xc++ -Wall -lstdc++fs -";
-		if (system(cmd.c_str()) != 0) {
+		string cmd = "tail -n +2 \"" + source.string() + "\" > \"" + tmp.string() + "\"; c++ \"" + tmp.string() + "\" -o \"" + target.string() + "\" -Wall -lstdc++fs";
+		int result = system(cmd.c_str());
+		remove(tmp);
+		if (result != 0) {
 			exit(1);
 		}
 	}
