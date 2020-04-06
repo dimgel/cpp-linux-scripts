@@ -1,12 +1,14 @@
 #include <cstdio>
 #include <cstdlib>
+#include <filesystem>
+#include <fstream>
+#include <regex>
 #include <string>
 #include <vector>
-#include <experimental/filesystem>
 #include <unistd.h>
 #include <wait.h>
 
-namespace fs = std::experimental::filesystem;
+namespace fs = std::filesystem;
 
 using std::string;
 using fs::path;
@@ -23,7 +25,20 @@ string replaceAll(string s, const string& search, const string& replace) {
 }
 
 
-// I call gcc via `system(3)` which starts shell. Slow. OK for compilation, but not for running compiled script.
+// https://stackoverflow.com/a/2602060/4247442
+string readFile(const path& p) {
+	std::ifstream f(p);
+	string s;
+	f.seekg(0, std::ios::end);
+	s.reserve(f.tellg());
+	f.seekg(0, std::ios::beg);
+	// Extra parentheses around the first argument is mandatory! See link above.
+	s.assign((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+	return s;
+}
+
+
+// I call gcc via `system(3)` which starts shell. It's slow; OK for compilation, but not for running compiled script.
 int fastExec(const char* cmd, char** argv) {
 	auto pid = fork();
 	if (pid == -1) {
@@ -53,33 +68,56 @@ int main(int argc, char** argv) {
 		exit(1);
 	}
 	
-	path source(*argv);
-	if (source.extension() != ".cpp") {
+	path script(*argv);
+	if (script.extension() != ".cpp") {
 		fputs("ERROR: Given script must have .cpp extension", stderr);
 		exit(1);
 	}
 	
-	char* home = getenv("HOME");
-	if (home == nullptr || *home == '\0') {
+	char* home0 = getenv("HOME");
+	if (home0 == nullptr || *home0 == '\0') {
 		fputs("ERROR: HOME environment variable is not set", stderr);
 		exit(1);
 	}
-	path target(string(home) + "/.cache/" + me.filename().string() + "/" + replaceAll(canonical(source), "/", "--").substr(2));
+	string home = home0;
+
+	path target(home + "/.cache/" + me.filename().string() + "/" + replaceAll(canonical(script), "/", "--").substr(2));
 	target.replace_extension();
 	
-	if (!fs::exists(target) || fs::last_write_time(source) > fs::last_write_time(target)) {
-		puts("Recompiling...");
+	if (!fs::exists(target) || fs::last_write_time(script) > fs::last_write_time(target)) {
+//		puts("Recompiling...");
+
+		// GCC fails to link std::experimental::filesystem when compiles from stdin. 
+		// So I'll store it into temporary source file, without first shebang line.
+		// I don't use tmpfile() because I need temp file name.
+		path source(target.string() + ".tmp.cpp");
+
+		// If script's 2nd line starts with "//!cc=", it's custom compile command.
+		string s = readFile(script);
+		string cc;
+		{
+			std::regex r("^#![^\r\n]+\r?\n//!cc[ \t]*=[ \t]*([^\r\n]+)\r?\n.*$", std::regex::extended);
+			std::smatch m;
+			if (std::regex_match(s, m, r)) {
+				cc = m[1];
+			} else {
+				cc = "c++ {source} -o {target} -std=c++17 -O2 -Wall";
+			}
+		}
+		cc = replaceAll(cc, "{source}", "\"" + source.string() + "\"");
+		cc = replaceAll(cc, "{target}", "\"" + target.string() + "\"");
+		cc = replaceAll(cc, " -I~/", " -I" + home + "/");
+		cc = replaceAll(cc, " -L~/", " -L" + home + "/");
 		
 		create_directories(target.parent_path());
-		
-		// GCC fails to link std::experimental::filesystem when comiles from stdin. So cut off shebank line from source and store it in some temporary file.
-		// I don't use tmpfile() because I need file name.
-		path tmp(target.string() + ".tmp.cpp");
-		
-		// https://stackoverflow.com/a/1003654/4247442
-		string cmd = "tail -n +2 \"" + source.string() + "\" > \"" + tmp.string() + "\"; c++ \"" + tmp.string() + "\" -o \"" + target.string() + "\" -Wall -lstdc++fs";
-		int result = system(cmd.c_str());
-		remove(tmp);
+
+		// Write to temporary source file, without first shebang line.
+		std::ofstream(source, std::ios::out | std::ios::trunc) << s.substr(s.find('\n') + 1);
+
+		// Just in case, how to make GCC read source from pipe: https://stackoverflow.com/a/1003654/4247442
+//		puts(cc.c_str());
+		int result = system(cc.c_str());
+		remove(source);
 		if (result != 0) {
 			exit(1);
 		}

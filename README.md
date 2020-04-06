@@ -1,70 +1,38 @@
 # Writing linux scripts in C++
 
-Disclaimer: please stop telling me this is bad idea or bad implementation. I was just trying C++ filesystem API; had fun setting executable bit on a `.cpp` file; haven't yet created (and so far have no plans to create) any useful C++ scripts; uploaded it to github because was asked to; and was **very** surprised to get huge feedback, enhancement requests and even pull requests O_O for such a trivial next-to-hello-world program.
+They say compiled languages are inconvenient for scripting because you have to recompile your script everytime you edit it. 
+But you don't have to do it manually. Here's the solution for C++.
 
-BTW, anyone needs remote Software Developer? Middle C++, or Senior Java / Scala / PHP / fullstack web. Resume: [http://dimgel.me/en/Dmitry_Grigoriev_resume_en-short.pdf](http://dimgel.me/en/Dmitry_Grigoriev_resume_en-short.pdf)
+**Disclaimer.** Don't tell me writing scripts in C++ is bad idea. Don't be dogmatic. All rules have exceptions.
 
-## In short
+## Idea
 
-1. Compile and install `build-n-run.cpp`: `make && sudo make install`.
-
-2. Create C++ source file, prepend it with shebang line `#!/usr/local/bin/build-n-run`, make it executable `chmod +x script.cpp` and run: `./script.cpp`. An example `hello.cpp` script is provided.
-
-3. `build-n-run` compiles `script.cpp` to `~/.cache/build-n-run/` **only if source file is newer than compiled binary**, and then runs compiled binary.
-
-## Concept
-
-They say compiled languages are inconvenient for scripting because you have to recompile your script everytime you edit it. A little program `build-n-run.cpp` presented in this repo solves the problem.
-
-In bash scripts, first line always starts with "[shebang](https://en.wikipedia.org/wiki/Shebang_(Unix))" followed by name of a bash interpreter. When you run bash script, effectively bash interpreter is run and this script is passed to it as first argument.
+In bash scripts, first line always starts with "[shebang](https://en.wikipedia.org/wiki/Shebang_(Unix))" followed by name of a bash interpreter. 
+When you run bash script, effectively bash interpreter is started with script's filename in first command-line argument.
 
         #!/bin/bash
         echo "Hello world!"
 
-Same approach is used for Python scripts, Scala scripts, etc. So I did the same: example script `hello.cpp` in this repo is normal C++ program prepended with shebang line:
+Same approach is used for Python scripts, Scala scripts, etc. And I did just the same.
 
-        #!/usr/local/bin/build-n-run
-        #include <stdio.h>
-        int main() {
-            puts("Hello world!");
-        }
+## Howto
 
-`build-n-run` automatically recompiles script **if it is new or edited** (i.e. if compiled binary does not exist or if source file's modification time is newer than binary's) and then runs it:
+1. Clone or download this repo.
 
-        $ hello.cpp
-        Recompiling...    <--- First time you run your script, it's recompiled.
-        Hello world!
+2. Build and install `build-n-run.cpp`: `make && sudo make install`. It goes into `/usr/local/bin/`.
 
-        $ hello.cpp
-        Hello world!      <--- No recompilation on next run if script is unchanged.
+3. Create C++ source file, prepend it with shebang line `#!/usr/local/bin/build-n-run`, make it executable `chmod +x script.cpp`. See `example.cpp`.
+   
+4. You can specify custom build command in script's 2nd line. `build-n-run` expands `~` into current user's home directory in `-I~/...` and `-L~/...` options. 
+   See `example-custom-compile.cpp`.
 
-## Installation and use
+5. Run your script: `./script.cpp`. `build-n-run` will compile it on first run and after everytime you edit / touch it.
 
-1. Download `build-n-run.cpp` from this repo.
+Script `/aaa/bbb/ccc.cpp` is compiled into `~/.cache/build-n-run/aaa--bbb--ccc`. If compilation fails, `build-n-run` will exit with status code `1`.
 
-2. (Optional) Check its source code: you might want to update GCC options used to compile your scripts, or remove "Recompiling..." message if it messes with our scripts' output.
-
-3. Build and install it. `make install` copies binary to `/usr/local/bin`; you can copy it anywhere you want, just don't forget to update path in scripts' shebang line. I use gcc 7.3.0, so I explicitly link `libstdc++fs.a` which implements `std::experimental::filesystem`.
-
-        # make && sudo make install
-
-That's all. Now write C++ program with shebang line, **chmod it to be executable**, and run:
-
-        $ chmod +x hello.cpp
-        $ ./hello.cpp
-        Recompiling...
-        Hello world!
-
-Let's take a look at `~/.cache/build-n-run` directory:
-
-        $ ls ~/.cache/build-n-run
-        home--me--tmp--hello
-
-I downloaded `hello.cpp` to `/home/me/tmp`, and compiled binary's name reflects source's full path, slashes replaced with `"--"`.
-
-## Security concerns
-
-Compiled cache is inside user's home, so scripts compiled by one user cannot be run by other users (see issue #1).
+**ATTENTION.** Compiler's output is not redirected. So if compilation succeeded but with warnings, those warnings will still go to `stdio` 
+and will prepend your script's output.   
+     
 
 ## Known discussions
 
