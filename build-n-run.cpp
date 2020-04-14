@@ -56,9 +56,7 @@ int fastExec(const char* cmd, char** argv) {
 			fputs("ERROR: waitpid() failed", stderr);
 			exit(1);
 		}
-		status = WIFEXITED(status) ? WEXITSTATUS(status) : 127;
-		printf("DEBUG: script returned status = %d\n", status);
-		return status;
+		return WIFEXITED(status) ? WEXITSTATUS(status) : 127;
 	}
 }
 
@@ -95,15 +93,14 @@ int main(int argc, char** argv) {
 		path source(target.string() + ".tmp.cpp");
 
 		// If script's 2nd line starts with "//!cc=", it's custom compile command.
+		// If script's 2nd line starts with "//!cc+=", it's additional options to default compile command.
 		string s = readFile(script);
-		string cc;
+		string cc = "c++ {source} -o {target} -std=c++17 -O2 -Wall";
 		{
-			std::regex r("^#![^\r\n]+\r?\n//!cc[ \t]*=[ \t]*([^\r\n]+)\r?\n.*$", std::regex::extended);
+			std::regex r("^#![^\r\n]+\r?\n//!cc[ \t]*(\\+?)=[ \t]*([^\r\n]+)\r?\n.*$", std::regex::extended);
 			std::smatch m;
 			if (std::regex_match(s, m, r)) {
-				cc = m[1];
-			} else {
-				cc = "c++ {source} -o {target} -std=c++17 -O2 -Wall";
+				cc = m.str(1).empty() ? m.str(2) : cc + " " + m.str(2);
 			}
 		}
 		cc = replaceAll(cc, "{source}", "\"" + source.string() + "\"");

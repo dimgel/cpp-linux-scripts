@@ -25,8 +25,9 @@ Same approach is used for Python scripts, Scala scripts, etc. And I did just the
 
 3. Create C++ source file, prepend it with shebang line `#!/usr/local/bin/build-n-run`, make it executable `chmod +x script.cpp`. See `example.cpp`.
 
-4. You can specify custom build command in script's 2nd line. `build-n-run` expands `~` into current user's home directory in `-I~/...` and `-L~/...` options.
-   See `example-custom-compile.cpp`.
+4. You can specify custom build command in script's 2nd line, or add custom options to default build command.
+   `build-n-run` expands `~` into current user's home directory in `-I~/...` and `-L~/...` options.
+   See `example-custom-build1.cpp`, `example-custom-build2.cpp`.
 
 5. Run your script: `./script.cpp`. `build-n-run` will compile it on first run and after everytime you edit / touch it.
 

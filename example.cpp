@@ -1,5 +1,5 @@
 #!/usr/local/bin/build-n-run
-#include <stdio.h>
+#include <cstdio>
 
 int main() {
     puts("Hello world!");
