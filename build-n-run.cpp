@@ -56,6 +56,8 @@ int fastExec(const char* cmd, char** argv) {
 			fputs("ERROR: waitpid() failed", stderr);
 			exit(1);
 		}
+		status = WIFEXITED(status) ? WEXITSTATUS(status) : 127;
+		printf("DEBUG: script returned status = %d\n", status);
 		return status;
 	}
 }
