@@ -1,1 +1,5 @@
-build-n-run
+/target
+
+# QtCreator's generic project files.
+/build-n-run.*
+

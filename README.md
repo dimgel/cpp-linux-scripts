@@ -21,19 +21,20 @@ Same approach is used for Python scripts, Scala scripts, etc. And I did just the
 
 1. Clone or download this repo.
 
-2. Build and install `build-n-run.cpp`: `make && sudo make install`. It goes into `/usr/local/bin/`.
+2. Build and install: `make && sudo make install-system` (installs into `/usr/local/bin/`)
+   or `make && make install-user` (installs into `~/bin`).
 
-3. Create C++ source file, prepend it with shebang line `#!/usr/local/bin/build-n-run`, make it executable `chmod +x script.cpp`. See `example.cpp`.
+3. Create C++ source file, prepend it with shebang line `#!/usr/local/bin/build-n-run`, make it executable `chmod +x script.cpp`. See `examples/hello.cpp`.
 
 4. You can specify custom build command in script's 2nd line, or add custom options to default build command.
    `build-n-run` expands `~` into current user's home directory in `-I~/...` and `-L~/...` options.
-   See `example-custom-build1.cpp`, `example-custom-build2.cpp`.
+   See `examples/custom-build1.cpp`, `examples/custom-build2.cpp`.
 
 5. Run your script: `./script.cpp`. `build-n-run` will compile it on first run and after everytime you edit / touch it.
 
 Script `/aaa/bbb/ccc.cpp` is compiled into `~/.cache/build-n-run/aaa--bbb--ccc`. If compilation fails, `build-n-run` will exit with status code `1`.
 
-**ATTENTION.** Compiler's output is not redirected. So if compilation succeeded but with warnings, those warnings will still go to `stdio`
+**ATTENTION:** Compiler's output is not redirected. So if compilation succeeded but with warnings, those warnings will still go to `stdio`
 and will prepend your script's output.
 
 
