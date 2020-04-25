@@ -1,9 +1,9 @@
+.PHONY: all
+all: target/build-n-run
+
 .PHONY: clean
 clean:
 	rm -rf target
-
-.PHONY: all
-all: target/build-n-run
 
 target/build-n-run: src/build-n-run.cpp
 	mkdir -p target
