@@ -87,15 +87,17 @@ int main(int argc, char** argv) {
 	if (!fs::exists(target) || fs::last_write_time(script) > fs::last_write_time(target)) {
 //		puts("Recompiling...");
 
-		// GCC fails to link std::experimental::filesystem when compiles from stdin. 
+		// GCC has problems compiling from stdin (i.e. from pipe).
 		// So I'll store it into temporary source file, without first shebang line.
 		// I don't use tmpfile() because I need temp file name.
-		path source(target.string() + ".tmp.cpp");
+		// I place temp source file into same directory as script, for relative (quoted) includes to work.
+		path source(canonical(script).replace_extension(".tmp.cpp"));
 
+		// Default compile command.
+		string cc = "c++ {source} -o {target} -std=c++17 -O2 -Wall";
 		// If script's 2nd line starts with "//!cc=", it's custom compile command.
 		// If script's 2nd line starts with "//!cc+=", it's additional options to default compile command.
 		string s = readFile(script);
-		string cc = "c++ {source} -o {target} -std=c++17 -O2 -Wall";
 		{
 			std::regex r("^#![^\r\n]+\r?\n//!cc[ \t]*(\\+?)=[ \t]*([^\r\n]+)\r?\n.*$", std::regex::extended);
 			std::smatch m;
@@ -113,9 +115,15 @@ int main(int argc, char** argv) {
 		// Write to temporary source file, without first shebang line.
 		std::ofstream(source, std::ios::out | std::ios::trunc) << s.substr(s.find('\n') + 1);
 
-		// Just in case, how to make GCC read source from pipe: https://stackoverflow.com/a/1003654/4247442
+		// Temporarily change dir to source location, for relative paths in custom compile command's -I and -L options to work.
+		auto cwd = fs::current_path();
+		fs::current_path(source.parent_path());
+
 //		puts(cc.c_str());
 		int result = system(cc.c_str());
+
+		fs::current_path(cwd);
+
 		remove(source);
 		if (result != 0) {
 			exit(1);
