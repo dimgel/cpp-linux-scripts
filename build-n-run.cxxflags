@@ -1,0 +1,1 @@
+-std=c++17 -fno-rtti -Wall -Wextra

@@ -1,5 +1,3 @@
 /target
-
-# QtCreator's generic project files.
-/build-n-run.*
+/build-n-run.creator.user
 
