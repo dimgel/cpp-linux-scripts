@@ -1,4 +1,4 @@
-#!/usr/local/bin/build-n-run
+#!/usr/bin/env build-n-run
 //!cc+= -g
 #include <cstdio>
 
